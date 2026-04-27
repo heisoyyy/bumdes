@@ -6,20 +6,29 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('pengelolaan_akun', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->foreignId('pengurus_id')
+                ->constrained('users')
+                ->onDelete('restrict')
+                ->onUpdate('cascade');
+            $table->foreignId('masyarakat_id')
+                ->constrained('users')
+                ->onDelete('restrict')
+                ->onUpdate('cascade');
+            $table->enum('aksi', [
+                'tambah', 
+                'edit', 
+                'nonaktifkan', 
+                'aktifkan'
+            ]);
+            $table->text('keterangan')->nullable();
+            $table->timestamp('created_at')->useCurrent();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('pengelolaan_akun');
