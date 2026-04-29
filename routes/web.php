@@ -180,6 +180,18 @@ Route::middleware(['auth', 'role:pengurus'])
                 Route::patch('/toggle/{id}', [AkunMasyarakatController::class, 'toggle'])
                     ->name('toggle');
             });
+        Route::prefix('akun')
+            ->name('akun.')
+            ->group(function () {
+                Route::get('/', [\App\Http\Controllers\Pengurus\AkunController::class, 'index'])
+                    ->name('index');
+                Route::put('/update-profil', [\App\Http\Controllers\Pengurus\AkunController::class, 'updateProfil'])
+                    ->name('update-profil');
+                Route::put('/update-password', [\App\Http\Controllers\Pengurus\AkunController::class, 'updatePassword'])
+                    ->name('update-password');
+                Route::delete('/hapus-foto', [\App\Http\Controllers\Pengurus\AkunController::class, 'hapusFoto'])
+                    ->name('hapus-foto');
+            });
     });
 
 // ============================================
@@ -205,6 +217,19 @@ Route::middleware(['auth', 'role:kepala_desa'])
                 Route::get('/filter', [LogTransaksiController::class, 'filter'])
                     ->name('filter');
             });
+
+        Route::prefix('akun')
+            ->name('akun.')
+            ->group(function () {
+                Route::get('/', [AkunController::class, 'index'])
+                    ->name('index');
+                Route::put('/update-profil', [\App\Http\Controllers\KepalaDesa\AkunController::class, 'updateProfil'])
+                    ->name('update-profil');
+                Route::put('/update-password', [\App\Http\Controllers\KepalaDesa\AkunController::class, 'updatePassword'])
+                    ->name('update-password');
+                Route::delete('/hapus-foto', [\App\Http\Controllers\KepalaDesa\AkunController::class, 'hapusFoto'])
+                    ->name('hapus-foto');
+            });
     });
 
 // ============================================
@@ -218,4 +243,17 @@ Route::middleware(['auth', 'role:masyarakat'])
         // Dashboard
         Route::get('/dashboard', [MasyarakatDashboard::class, 'index'])
             ->name('dashboard');
+        
+        Route::prefix('akun')
+            ->name('akun.')
+            ->group(function () {
+                Route::get('/', [\App\Http\Controllers\Masyarakat\AkunController::class, 'index'])
+                    ->name('index');
+                Route::put('/update-profil', [\App\Http\Controllers\Masyarakat\AkunController::class, 'updateProfil'])
+                    ->name('update-profil');
+                Route::put('/update-password', [\App\Http\Controllers\Masyarakat\AkunController::class, 'updatePassword'])
+                    ->name('update-password');
+                Route::delete('/hapus-foto', [\App\Http\Controllers\Masyarakat\AkunController::class, 'hapusFoto'])
+                    ->name('hapus-foto');
+            });
     });

@@ -1,3 +1,4 @@
+{{-- layout/sidebar-masyarakat.blade.php --}}
 <div class="sidebar-label">Main Menu</div>
 
 <div class="sidebar-item">
