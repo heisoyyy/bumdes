@@ -3,38 +3,55 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Login Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles authenticating users for the application and
-    | redirecting them to your home screen. The controller uses a trait
-    | to conveniently provide its functionality to your applications.
-    |
-    */
-
-    use AuthenticatesUsers;
-
-    /**
-     * Where to redirect users after login.
-     *
-     * @var string
-     */
-    protected $redirectTo = '/home';
-
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
+    public function index()
     {
-        $this->middleware('guest')->except('logout');
-        $this->middleware('auth')->only('logout');
+        return view('auth.login');
+    }
+
+    public function login(Request $request)
+    {
+        $request->validate([
+            'username' => 'required|string',
+            'password' => 'required|string',
+        ], [
+            'username.required' => 'Username wajib diisi',
+            'password.required' => 'Password wajib diisi',
+        ]);
+
+        $credentials = [
+            'username'  => $request->username,
+            'password'  => $request->password,
+            'is_active' => 'aktif',
+        ];
+
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+
+            // Update last login
+            Auth::user()->update([
+                'last_login' => now(),
+            ]);
+
+            return match (Auth::user()->role) {
+                'pengurus'    => redirect()->route('pengurus.dashboard')
+                    ->with('success', 'Selamat datang, ' . Auth::user()->name),
+                'kepala_desa' => redirect()->route('kepaladesa.dashboard')
+                    ->with('success', 'Selamat datang, ' . Auth::user()->name),
+                'masyarakat'  => redirect()->route('masyarakat.dashboard')
+                    ->with('success', 'Selamat datang, ' . Auth::user()->name),
+                default       => redirect()->route('login'),
+            };
+        }
+
+        return back()
+            ->withInput($request->only('username'))
+            ->withErrors([
+                'username' => 'Username atau password salah, atau akun tidak aktif',
+            ]);
     }
 }
